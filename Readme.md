@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
-* Студент: [Саша Терехов](https://up.htmlacademy.ru/javascript/18/user/350339).
-* Наставник: `Неизвестно`.
+* Студент: Саша Терехов](https://up.htmlacademy.ru/javascript/18/user/350339).
+* Наставник: Keksobot.
 
 ---
 
