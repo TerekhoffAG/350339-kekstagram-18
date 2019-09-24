@@ -47,7 +47,8 @@ var createCommentsGuests = function (namesGuests, commentsGuests) {
   var quantityGuests = getRandomIntNumber(1, namesGuests.length);
 
   for (var i = 1; i <= quantityGuests; i++) {
-    var itemComment = getCommentGuest(i, namesGuests, commentsGuests);
+    var iii = getRandomIntNumber(1, 6);
+    var itemComment = getCommentGuest(iii, namesGuests, commentsGuests);
     arrayCommentsGuests.push(itemComment);
   }
 
@@ -62,7 +63,7 @@ var createDescription = function (namePhoto) {
 
   return {
     url: pathPhoto,
-    description: '',
+    description: 'Hi lOl',
     likes: likesGuests,
     comments: commentsGuests
   };
@@ -112,3 +113,59 @@ var getPicturesContainer = function () {
 };
 
 getPicturesContainer();
+
+// Работа с большой фотографией пользователя
+
+var bigPicture = document.querySelector('.big-picture');
+var image = bigPicture.querySelector('.big-picture__img img');
+var likesImage = bigPicture.querySelector('.likes-count');
+var commentsImage = bigPicture.querySelector('.comments-count');
+var captionImage = bigPicture.querySelector('.social__caption');
+var commentsCount = bigPicture.querySelector('.social__comment-count');
+var commentsLoader = bigPicture.querySelector('.comments-loader');
+
+var commentsBlock = bigPicture.querySelector('.social__comments');
+var oneCommentTemplate = commentsBlock.querySelector('.social__comment');
+
+// Функция создаёт один коментарий из шаблона под большой фотографией
+var createСomment = function (item) {
+  var oneComment = oneCommentTemplate.cloneNode(true);
+  var commentPicture = oneComment.querySelector('.social__picture');
+  var commentText = oneComment.querySelector('.social__text');
+
+  commentPicture.src = item.avatar;
+  commentPicture.alt = item.name;
+  commentText.textContent = item.message;
+
+  return oneComment;
+};
+
+// Функция создаёт блок коментариев из шаблона под большой фотографией
+var getСomments = function (itemPhoto) {
+  commentsCount.classList.add('visually-hidden');
+  commentsLoader.classList.add('visually-hidden');
+
+  var fragment = document.createDocumentFragment();
+
+  for (var i = 0; i < itemPhoto.length; i++) {
+    var itemComment = createСomment(itemPhoto[i]);
+    fragment.appendChild(itemComment);
+  }
+
+  commentsBlock.innerHTML = '';
+  commentsBlock.appendChild(fragment);
+};
+
+// Функция показывает большую фотографию с лайками и коментариями
+var showBigPicture = function (picture) {
+  picture.classList.remove('hidden');
+
+  image.src = arrayMockData[0].url;
+  likesImage.textContent = arrayMockData[0].likes;
+  commentsImage.textContent = arrayMockData[0].comments.length;
+  captionImage.textContent = arrayMockData[0].description;
+
+  getСomments(arrayMockData[0].comments);
+};
+
+showBigPicture(bigPicture);
