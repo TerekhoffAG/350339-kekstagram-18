@@ -158,8 +158,8 @@ var getСomments = function (itemPhoto) {
 
 // Функция показывает большую фотографию с лайками и коментариями
 var showBigPicture = function (picture) {
-  picture.classList.remove('hidden');
-
+  picture.classList.add('hidden');
+  // picture.classList.remove('hidden'); заменить эту строку после раздела модули
   image.src = arrayMockData[0].url;
   likesImage.textContent = arrayMockData[0].likes;
   commentsImage.textContent = arrayMockData[0].comments.length;
@@ -169,3 +169,199 @@ var showBigPicture = function (picture) {
 };
 
 showBigPicture(bigPicture);
+
+// Работа с формой загрузкой и редактированием фотографией пользователя
+
+// Редактирование размера загруженного изображения
+var Scale = {
+  MIN: 25,
+  MAX: 100,
+  STEP: 25,
+  RATIO: 100,
+  TEXT_OUT_ZOOM: 'Уменьшить',
+  TEXT_IN_ZOOM: 'Увеличить'
+};
+
+var blockScaleButtons = document.querySelector('.img-upload__scale');
+var controlValueScale = blockScaleButtons.querySelector('.scale__control--value');
+var imageUpload = document.querySelector('.img-upload__preview');
+
+var resetValueScale = function () {
+  controlValueScale.value = Scale.MAX + '%';
+  imageUpload.style.transform = '';
+};
+
+var onButtonScaleClick = function (evt) {
+  var valueScale = parseInt(controlValueScale.value, 10);
+
+  if (evt.target.textContent === Scale.TEXT_IN_ZOOM) {
+    if (valueScale < Scale.MAX) {
+      valueScale += Scale.STEP;
+    }
+  }
+
+  if (evt.target.textContent === Scale.TEXT_OUT_ZOOM) {
+    if (valueScale > Scale.MIN) {
+      valueScale -= Scale.STEP;
+    }
+  }
+
+  controlValueScale.value = valueScale + '%';
+  imageUpload.style.transform = 'scale(' + (valueScale / Scale.RATIO) + ')';
+};
+
+// Наложение эффектов на фотографию
+var listEffects = document.querySelector('.effects__list');
+// var imageUpload = document.querySelector('.img-upload__preview');
+var selectorEffectLevel = document.querySelector('.effect-level');
+// var inputEffectLevel = document.querySelector('.effect-level__value');
+
+var classEffect = '';
+
+// сброс эффектов фотографии к начальному значению
+var resetEffects = function () {
+  if (classEffect !== '') {
+    imageUpload.classList.remove(classEffect);
+    imageUpload.style.filter = null;
+  }
+
+  pinRange.style.left = RangeBlock.MAX + '%';
+  depthRange.style.width = pinRange.style.left;
+  inputEffectLevel.value = RangeBlock.MAX;
+};
+
+// применение эффекта к фотографии
+var onListEffectsClick = function (evt) {
+  if (evt.target.nodeName === 'INPUT') {
+    var valueInput = evt.target.value;
+    resetEffects();
+
+    var flagShowPin = valueInput === 'none';
+    selectorEffectLevel.classList.toggle('hidden', flagShowPin);
+
+    if (valueInput !== 'none') {
+      classEffect = 'effects__preview--' + valueInput;
+      imageUpload.classList.add(classEffect);
+    }
+  }
+};
+
+// уровень наложеногго эффекта - работа с ползунком
+var lineRange = document.querySelector('.effect-level__line');
+var pinRange = document.querySelector('.effect-level__pin');
+var depthRange = document.querySelector('.effect-level__depth');
+var inputEffectLevel = document.querySelector('.effect-level__value');
+
+var RangeBlock = {
+  PADDING: 20,
+  MAX: 100,
+  MIN: 0,
+  RATIO: 100
+};
+
+var RATIO_LEVEL = 100;
+var RATIO_LEVEL_BLUR = 0.05;
+var RATIO_LEVEL_HEAT = 0.02;
+var VALUE_SHIFT = 1;
+
+var getLevelEffect = function (levelEffect, className) {
+  var classImageUpload = {
+    'effects__preview--chrome': 'grayscale(' + (levelEffect / RATIO_LEVEL) + ')',
+    'effects__preview--sepia': 'sepia(' + (levelEffect / RATIO_LEVEL) + ')',
+    'effects__preview--marvin': 'invert(' + levelEffect + '%)',
+    'effects__preview--phobos': 'blur(' + (levelEffect * RATIO_LEVEL_BLUR) + 'px)',
+    'effects__preview--heat': 'brightness(' + (VALUE_SHIFT + levelEffect * RATIO_LEVEL_HEAT) + ')'
+  };
+
+  var result = classImageUpload[className];
+  imageUpload.style.filter = result;
+};
+
+var movePinRange = function (evt) {
+  var limitMovementX = {
+    min: lineRange.offsetLeft - RangeBlock.PADDING,
+    max: lineRange.offsetLeft + lineRange.offsetWidth - RangeBlock.PADDING
+  };
+
+  var pinRangeCoord = pinRange.offsetLeft + evt.movementX;
+  var pinRangePercent = (pinRangeCoord * RangeBlock.RATIO) / lineRange.offsetWidth;
+
+  if (pinRangeCoord < limitMovementX.min) {
+    pinRangePercent = RangeBlock.MIN;
+  } else if (pinRangeCoord > limitMovementX.max) {
+    pinRangePercent = RangeBlock.MAX;
+  }
+
+  var intPinRangePercent = Math.round(pinRangePercent);
+
+  inputEffectLevel.value = intPinRangePercent;
+  pinRange.style.left = pinRangePercent + '%';
+  depthRange.style.width = pinRange.style.left;
+  getLevelEffect(intPinRangePercent, classEffect);
+};
+
+var onPinRangeMousedown = function () {
+
+  var onPinRangeMouseMove = function (evt) {
+    movePinRange(evt);
+  };
+
+  var onPinRangeMouseUp = function () {
+    document.removeEventListener('mousemove', onPinRangeMouseMove);
+    document.removeEventListener('mouseup', onPinRangeMouseUp);
+  };
+
+  document.addEventListener('mousemove', onPinRangeMouseMove);
+  document.addEventListener('mouseup', onPinRangeMouseUp);
+};
+
+// Открытие и закрытие формы редактирования
+var ESC_KEYCODE = 27;
+
+var imgUploadBlock = document.querySelector('.img-upload');
+
+var formEditImg = imgUploadBlock.querySelector('.img-upload__overlay');
+var formEditImgOpen = imgUploadBlock.querySelector('#upload-file');
+var formEditImgClose = imgUploadBlock.querySelector('#upload-cancel');
+
+var onFormEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYCODE) {
+    closeForm();
+  }
+};
+
+var openForm = function () {
+  formEditImg.classList.remove('hidden');
+  document.addEventListener('keydown', onFormEscPress);
+
+  resetValueScale();
+  blockScaleButtons.addEventListener('click', onButtonScaleClick);
+
+  listEffects.addEventListener('click', onListEffectsClick);
+  selectorEffectLevel.classList.add('hidden');
+  resetEffects();
+
+  pinRange.addEventListener('mousedown', onPinRangeMousedown);
+};
+
+var closeForm = function () {
+  formEditImg.classList.add('hidden');
+  document.removeEventListener('keydown', onFormEscPress);
+  formEditImgOpen.value = '';
+
+  blockScaleButtons.removeEventListener('click', onButtonScaleClick);
+
+  listEffects.removeEventListener('click', onListEffectsClick);
+
+  pinRange.removeEventListener('mousedown', onPinRangeMousedown);
+};
+
+formEditImgOpen.addEventListener('change', function () {
+  openForm();
+});
+
+formEditImgClose.addEventListener('click', function () {
+  closeForm();
+});
+
+
