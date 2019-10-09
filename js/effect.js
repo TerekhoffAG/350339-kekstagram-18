@@ -1,6 +1,6 @@
 'use strict';
 (function () {
-  // Наложение эффектов на фотографию
+
   var RangeBlock = {
     PADDING: 20,
     MAX: 100,
@@ -25,7 +25,6 @@
 
   var classEffect = '';
 
-  // сброс эффектов фотографии к начальному значению
   var resetEffects = function () {
     if (classEffect !== '') {
       imageUpload.classList.remove(classEffect);
@@ -37,7 +36,6 @@
     inputEffectLevel.value = RangeBlock.MAX;
   };
 
-  // применение эффекта к фотографии
   var onListEffectsClick = function (evt) {
     if (evt.target.nodeName === 'INPUT') {
       var valueInput = evt.target.value;
@@ -53,7 +51,6 @@
     }
   };
 
-  // уровень наложеногго эффекта - работа с ползунком
   var getLevelEffect = function (levelEffect, className) {
     var classImageUpload = {
       'effects__preview--chrome': 'grayscale(' + (levelEffect / Ratio.LEVEL) + ')',
