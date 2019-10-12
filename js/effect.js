@@ -1,6 +1,5 @@
 'use strict';
 (function () {
-
   var RangeBlock = {
     PADDING: 20,
     MAX: 100,

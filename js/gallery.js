@@ -17,17 +17,20 @@
   };
 
   // Функция вставляет в разметку объекты DOM - фотография пользователя
-  var getPicturesContainer = function () {
+  var getPicturesContainer = function (data) {
+    window.picturesData = data;
+
     var fragment = document.createDocumentFragment();
 
-    for (var i = 0; i < window.data.length; i++) {
-      var itemPicture = createNewPicture(window.data[i]);
+    for (var i = 0; i < data.length; i++) {
+      var itemPicture = createNewPicture(data[i]);
       fragment.appendChild(itemPicture);
     }
 
     picturesContainer.appendChild(fragment);
   };
 
-  getPicturesContainer();
+  // загрузка данных с сервера
+  window.load(getPicturesContainer, window.openPopupError);
 
 })();
