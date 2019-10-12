@@ -45,13 +45,16 @@
   };
 
   // Функция показывает большую фотографию с лайками и коментариями
-  var showBigPicture = function () {
-    image.src = window.data[0].url;
-    likesImage.textContent = window.data[0].likes;
-    commentsImage.textContent = window.data[0].comments.length;
-    captionImage.textContent = window.data[0].description;
+  var openBigPicture = function (data, index) {
+    bigPicture.classList.remove('hidden');
+    document.addEventListener('keydown', onPopupEscPress);
 
-    getСomments(window.data[0].comments);
+    image.src = data[index].url;
+    likesImage.textContent = data[index].likes;
+    commentsImage.textContent = data[index].comments.length;
+    captionImage.textContent = data[index].description;
+
+    getСomments(data[index].comments);
   };
 
   // Открытие и закрытие просмотра фотографии в полноразмерном режиме
@@ -61,12 +64,6 @@
     }
   };
 
-  var openBigPicture = function () {
-    bigPicture.classList.remove('hidden');
-    showBigPicture();
-    document.addEventListener('keydown', onPopupEscPress);
-  };
-
   var closeBigPicture = function () {
     bigPicture.classList.add('hidden');
     document.removeEventListener('keydown', onPopupEscPress);
@@ -74,13 +71,15 @@
 
   picturesContainer.addEventListener('click', function (evt) {
     if (evt.target.classList.contains('picture__img')) {
-      openBigPicture();
+      var indexPhoto = evt.target.attributes[1].value.replace(/[^\d]/g, '');
+      openBigPicture(window.picturesData, indexPhoto - 1);
     }
   });
 
   picturesContainer.addEventListener('keydown', function (evt) {
     if (evt.keyCode === window.util.ENTER_KEYCODE && evt.target.classList.contains('picture')) {
-      openBigPicture();
+      var indexPhoto = evt.target.firstElementChild.attributes[1].value.replace(/[^\d]/g, '');
+      openBigPicture(window.picturesData, indexPhoto - 1);
     }
   });
 
