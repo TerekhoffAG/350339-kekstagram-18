@@ -4,7 +4,8 @@
   var SUCCESS_CODE = 200;
 
   var Url = {
-    LOAD: 'https://js.dump.academy/kekstagram/data'
+    LOAD: 'https://js.dump.academy/kekstagram/data',
+    UPLOAD: 'https://js.dump.academy/kekstagram'
   };
 
   window.load = function (onSuccess, onError) {
@@ -38,6 +39,27 @@
 
     xhr.open('GET', Url.LOAD);
     xhr.send();
+  };
+
+  window.upload = function (data, onSuccess, onError) {
+    var xhr = new XMLHttpRequest();
+
+    xhr.responseType = 'json';
+
+    xhr.addEventListener('load', function () {
+      if (xhr.status === SUCCESS_CODE) {
+        onSuccess();
+      } else {
+        onError();
+      }
+    });
+
+    xhr.addEventListener('error', function () {
+      onError();
+    });
+
+    xhr.open('POST', Url.UPLOAD);
+    xhr.send(data);
   };
 
 })();

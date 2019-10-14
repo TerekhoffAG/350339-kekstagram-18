@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   // Работа с формой загрузкой и редактированием фотографией пользователя
+  var form = document.querySelector('.img-upload__form');
   var imgUploadBlock = document.querySelector('.img-upload');
 
   var formEditImg = imgUploadBlock.querySelector('.img-upload__overlay');
@@ -38,6 +39,7 @@
     pinRange.addEventListener('mousedown', window.effect.onPinRangeMousedown);
 
     btnSubmitForm.addEventListener('click', window.onFieldHashtagInput);
+    form.addEventListener('submit', onFormSubmit);
   };
 
   var closeForm = function () {
@@ -50,8 +52,17 @@
     pinRange.removeEventListener('mousedown', window.effect.onPinRangeMousedown);
 
     btnSubmitForm.removeEventListener('click', window.onFieldHashtagInput);
+    form.removeEventListener('submit', onFormSubmit);
 
     formEditImgOpen.value = '';
+  };
+
+  // отправка формы на сервер
+  var onFormSubmit = function (evt) {
+    evt.preventDefault();
+    window.upload(new FormData(form), window.openPopupSuccess, window.openPopupError);
+    closeForm();
+    form.reset();
   };
 
   formEditImgOpen.addEventListener('change', function () {
