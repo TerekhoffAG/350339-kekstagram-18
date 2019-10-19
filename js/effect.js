@@ -106,5 +106,4 @@
     onListEffectsClick: onListEffectsClick,
     onPinRangeMousedown: onPinRangeMousedown
   };
-
 })();
