@@ -1,6 +1,12 @@
 'use strict';
 (function () {
   // Работа с большой фотографией пользователя
+  var LIMIT_PIC = 5;
+
+  var counter;
+  var comments;
+  var cutComments;
+
   var bigPicture = document.querySelector('.big-picture');
   var image = bigPicture.querySelector('.big-picture__img img');
   var likesImage = bigPicture.querySelector('.likes-count');
@@ -30,9 +36,6 @@
 
   // Функция создаёт блок коментариев из шаблона под большой фотографией
   var getСomments = function (itemPhoto) {
-    commentsCount.classList.add('visually-hidden');
-    commentsLoader.classList.add('visually-hidden');
-
     var fragment = document.createDocumentFragment();
 
     for (var i = 0; i < itemPhoto.length; i++) {
@@ -42,6 +45,20 @@
 
     commentsBlock.innerHTML = '';
     commentsBlock.appendChild(fragment);
+  };
+
+  // Функция-обработчик добовляет по 5 коментариев под фотографией
+  var onLoaderClick = function () {
+    if (comments.length - counter > LIMIT_PIC) {
+      counter += LIMIT_PIC;
+      cutComments = comments.slice(0, counter);
+    } else {
+      cutComments = comments;
+      commentsLoader.classList.add('visually-hidden');
+    }
+
+    getСomments(cutComments);
+    commentsCount.childNodes[0].textContent = cutComments.length + ' из ';
   };
 
   // Функция показывает большую фотографию с лайками и коментариями
@@ -54,7 +71,20 @@
     commentsImage.textContent = data[index].comments.length;
     captionImage.textContent = data[index].description;
 
-    getСomments(data[index].comments);
+    counter = LIMIT_PIC;
+    comments = data[index].comments;
+
+    if (data[index].comments.length <= LIMIT_PIC) {
+      commentsCount.classList.add('visually-hidden');
+      commentsLoader.classList.add('visually-hidden');
+
+      getСomments(data[index].comments);
+    } else {
+      cutComments = comments.slice(0, counter);
+      getСomments(cutComments);
+
+      commentsLoader.addEventListener('click', onLoaderClick);
+    }
   };
 
   // Открытие и закрытие просмотра фотографии в полноразмерном режиме
@@ -66,7 +96,12 @@
 
   var closeBigPicture = function () {
     bigPicture.classList.add('hidden');
+    commentsCount.classList.remove('visually-hidden');
+    commentsLoader.classList.remove('visually-hidden');
+    commentsCount.childNodes[0].textContent = '5 из ';
+
     document.removeEventListener('keydown', onPopupEscPress);
+    commentsLoader.removeEventListener('click', onLoaderClick);
   };
 
   picturesContainer.addEventListener('click', function (evt) {
