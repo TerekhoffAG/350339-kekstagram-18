@@ -1,5 +1,4 @@
 'use strict';
-
 (function () {
   var VALUE_PIC = 10;
 

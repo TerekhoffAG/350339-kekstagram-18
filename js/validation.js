@@ -52,5 +52,4 @@
   };
 
   window.onFieldHashtagInput = onFieldHashtagInput;
-
 })();

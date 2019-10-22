@@ -42,5 +42,4 @@
     resetValueScale: resetValueScale,
     onButtonScaleClick: onButtonScaleClick
   };
-
 })();

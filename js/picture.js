@@ -121,5 +121,4 @@
   bigPictureClose.addEventListener('click', function () {
     closeBigPicture();
   });
-
 })();
