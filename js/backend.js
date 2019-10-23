@@ -29,12 +29,6 @@
       onError();
     });
 
-    // xhr.addEventListener('progress', function () {
-    //   if (xhr.readyState === 3 && xhr.status === SUCCESS_CODE) {
-    //     console.log('LOADING', xhr.readyState);
-    //   }
-    // });
-
     xhr.timeout = TIMEOUT;
 
     xhr.open('GET', Url.LOAD);
@@ -61,6 +55,5 @@
     xhr.open('POST', Url.UPLOAD);
     xhr.send(data);
   };
-
 })();
 

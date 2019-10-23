@@ -1,5 +1,4 @@
 'use strict';
-
 (function () {
   // Переменные для создание DOM элементов
   var templatePicture = document.querySelector('#picture').content.querySelector('.picture');

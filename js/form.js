@@ -1,8 +1,12 @@
 'use strict';
 (function () {
   // Работа с формой загрузкой и редактированием фотографией пользователя
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
   var form = document.querySelector('.img-upload__form');
   var imgUploadBlock = document.querySelector('.img-upload');
+  var imagePreview = document.querySelector('.img-upload__preview img');
+  var effectsPreview = document.querySelectorAll('.effects__preview');
 
   var formEditImg = imgUploadBlock.querySelector('.img-upload__overlay');
   var formEditImgOpen = imgUploadBlock.querySelector('#upload-file');
@@ -19,6 +23,29 @@
 
   var inputFieldHashtag = document.querySelector('.text__hashtags');
 
+  // функция загрузает выбранную фотографию пользователя
+  var setFileLoad = function () {
+    var file = formEditImgOpen.files[0];
+    var fileName = file.name.toLowerCase();
+
+    var matches = FILE_TYPES.some(function (it) {
+      return fileName.endsWith(it);
+    });
+
+    if (matches) {
+      var reader = new FileReader();
+
+      reader.addEventListener('load', function () {
+        imagePreview.src = reader.result;
+        effectsPreview.forEach(function (item) {
+          item.style.backgroundImage = 'url(' + reader.result + ')';
+        });
+      });
+
+      reader.readAsDataURL(file);
+    }
+  };
+
   // Открытие и закрытие формы редактирования
   var onFormEscPress = function (evt) {
     if (evt.keyCode === window.util.ESC_KEYCODE && inputFieldHashtag !== document.activeElement && textareaField !== document.activeElement) {
@@ -28,6 +55,7 @@
 
   var openForm = function () {
     formEditImg.classList.remove('hidden');
+    setFileLoad();
     document.addEventListener('keydown', onFormEscPress);
 
     window.scale.resetValueScale();
@@ -72,5 +100,4 @@
   formEditImgClose.addEventListener('click', function () {
     closeForm();
   });
-
 })();

@@ -73,5 +73,4 @@
     document.addEventListener('click', onSectionClick);
     document.addEventListener('keydown', onPopupEscPress);
   };
-
 })();
