@@ -6,7 +6,7 @@
   var buttons = filterBlock.querySelectorAll('.img-filters__button');
   var picturesContainer = document.querySelector('.pictures');
 
-  // получить случайные 10 элементов
+  // получить случайное колличество элементов
   var getRandomData = function (data) {
     var randomData = data.slice();
     randomData.sort(function () {
