@@ -23,7 +23,7 @@
 
   var inputFieldHashtag = document.querySelector('.text__hashtags');
 
-  // функция загрузает выбранную фотографию пользователя
+  // функция загрузает выбранную фотографию
   var setFileLoad = function () {
     var file = formEditImgOpen.files[0];
     var fileName = file.name.toLowerCase();
